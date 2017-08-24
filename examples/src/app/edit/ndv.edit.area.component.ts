@@ -1,8 +1,8 @@
-﻿import { Component, Input, EventEmitter, ElementRef } from '@angular/core';
+import { Component, Input, EventEmitter, ElementRef } from '@angular/core';
 
 
 @Component({
-    selector: 'ndv-date',
+    selector: 'ndv-area',
     styles: [`
        #ndv-ic {
         margin-left: 10px;
@@ -40,7 +40,6 @@
         .ndv-comp:hover > ndv-ic {
             display:block;
         }
-
         .ndv-save {
             margin-right:3px;
         }
@@ -49,15 +48,15 @@
             border: 1px solid #d9d9d9;
         }
     `],
-    template: `<span *ngIf="!permission">{{ddate}}</span><span *ngIf="permission" class='ndv-comp' [ngClass]="{'ndv-active':show}">
-                    <input *ngIf='show' type='date' [(ngModel)]='ddate' />
+    template: `<span *ngIf="!permission">{{text}}</span><form *ngIf="permission" class='ndv-comp' [ngClass]="{'ndv-active':show}" name='areaForm'><span>
+                    <textarea name='area' rows="6" cols="55" *ngIf='show' [(ngModel)]='text'></textarea>
                     <i id='ndv-ic' *ngIf='!show'>✎</i>
-                    <span *ngIf='!show' (click)='makeEditable()'>{{ddate || '-Empty Field-'}}</span>
+                    <span *ngIf='!show' style='line-height:1.5em;word-wrap: break-word;' (click)='makeEditable()'>{{text || '-Empty Field-'}}</span>
                 </span>
                 <div class='ndv-buttons' *ngIf='show'>
                     <button class='btn-x-sm' (click)='callSave()'><i>✔</i></button>
                     <button class='btn-x-sm' (click)='cancelEditable()'><i>✖</i></button>
-                </div>`,
+                </div></form>`,
     host: {
         "(document: click)": "compareEvent($event)",
         "(click)": "trackEvent($event)"
@@ -65,12 +64,11 @@
     outputs: ['save : onSave']
 })
 
-export class NdvEditDateComponent {
-    @Input('placeholder') holder;
+export class NdvEditAreaComponent {
+    @Input('placeholder') text;
     @Input('title') fieldName;
     @Input() permission = true;
-    ddate
-    originalddate;
+    originalText;
     tracker;
     el: ElementRef;
     show = false;
@@ -81,12 +79,7 @@ export class NdvEditDateComponent {
     }
     
     ngOnInit() {
-        this.holder = new Date(this.holder);
-        var dy = ("0" + this.holder.getDate()).slice(-2);
-        var month = ("0" + this.holder.getMonth() + 1).slice(-2);
-        var year = this.holder.getFullYear();
-        this.ddate = '' + year + '-' + month + '-' + dy;
-        this.originalddate = this.ddate;    //Saves a copy of the original field info.
+        this.originalText = this.text;    //Saves a copy of the original field info.
     }
 
     makeEditable() {
@@ -107,14 +100,14 @@ export class NdvEditDateComponent {
 
     cancelEditable() {
         this.show = false;
-        this.ddate = this.originalddate;
+        this.text = this.originalText;
     }
 
     callSave() {
         var data = {};  //BUILD OBJ FOR EXPORT.
-        data["" + this.fieldName] = this.ddate;
-        var oldddate = this.ddate;
-        setTimeout(() => { this.originalddate = oldddate; this.ddate = oldddate }, 0);  //Sets the field with the new ddate;
+        data["" + this.fieldName] = this.text;
+        var oldText = this.text;
+        setTimeout(() => { this.originalText = oldText; this.text = oldText }, 0);  //Sets the field with the new text;
         this.save.emit(data);
         this.show = false;
         

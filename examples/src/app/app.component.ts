@@ -1,6 +1,4 @@
-import { Component, Input } from '@angular/core';
-import { NdvEditComponent } from "./edit/ndv.edit.component";
-
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
