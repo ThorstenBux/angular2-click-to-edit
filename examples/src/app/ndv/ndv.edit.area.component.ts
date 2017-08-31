@@ -1,8 +1,8 @@
-﻿import { Component, Input, EventEmitter, ElementRef } from '@angular/core';
+import { Component, Input, EventEmitter, ElementRef } from '@angular/core';
 
 
 @Component({
-    selector: 'ndv-select',
+    selector: 'ndv-area',
     styles: [`
        #ndv-ic {
         margin-left: 10px;
@@ -40,26 +40,23 @@
         .ndv-comp:hover > ndv-ic {
             display:block;
         }
+        .ndv-save {
+            margin-right:3px;
+        }
         .ndv-active {
             background-color: #f0f0f0;
             border: 1px solid #d9d9d9;
         }
-        .ndv-save {
-            margin-right:3px;
-        }
-
     `],
-    template: `<span *ngIf="!permission">{{option}}</span><span *ngIf="permission" class='ndv-comp' [ngClass]="{'ndv-active':show}">
-                    <select *ngIf='show' [(ngModel)]='selectedOption'>
-                        <option *ngFor='let option of options' value='{{option}}'>{{option}}</option>
-                    </select>
+    template: `<span *ngIf="!permission">{{text}}</span><form *ngIf="permission" class='ndv-comp' [ngClass]="{'ndv-active':show}" name='areaForm'><span>
+                    <textarea name='area' rows="6" cols="55" *ngIf='show' [(ngModel)]='text'></textarea>
                     <i id='ndv-ic' *ngIf='!show'>✎</i>
-                    <span *ngIf='!show' (click)='makeEditable()'>{{selectedOption || '-Empty Field-'}}</span>
+                    <span *ngIf='!show' style='line-height:1.5em;word-wrap: break-word;' (click)='makeEditable()'>{{text || '-Empty Field-'}}</span>
                 </span>
                 <div class='ndv-buttons' *ngIf='show'>
                     <button class='btn-x-sm' (click)='callSave()'><i>✔</i></button>
                     <button class='btn-x-sm' (click)='cancelEditable()'><i>✖</i></button>
-                </div>`,
+                </div></form>`,
     host: {
         "(document: click)": "compareEvent($event)",
         "(click)": "trackEvent($event)"
@@ -67,14 +64,12 @@
     outputs: ['save : onSave']
 })
 
-export class NdvEditSelectComponent {
-    @Input('items') options;
-    @Input('placeholder') selectedOption;
-    @Input('title') fieldName;
+export class NdvEditAreaComponent {
+    @Input('placeholder') text: string;
+    @Input('title') fieldName: string;
     @Input() permission = true;
-    selectedItem;
-    originalOption;
-    tracker;
+    originalText: string;
+    tracker: any;
     el: ElementRef;
     show = false;
     save = new EventEmitter;
@@ -82,9 +77,9 @@ export class NdvEditSelectComponent {
     constructor(el: ElementRef) {
         this.el = el;
     }
-
+    
     ngOnInit() {
-        this.originalOption = this.selectedOption;    //Saves a copy of the original field info.
+        this.originalText = this.text;    //Saves a copy of the original field info.
     }
 
     makeEditable() {
@@ -93,28 +88,28 @@ export class NdvEditSelectComponent {
         }
     }
 
-    compareEvent(globalEvent) {
+    compareEvent(globalEvent: Event) {
         if (this.tracker != globalEvent && this.show) {
             this.cancelEditable();
         }
     }
 
-    trackEvent(newHostEvent) {
+    trackEvent(newHostEvent: Event) {
         this.tracker = newHostEvent;
     }
 
     cancelEditable() {
         this.show = false;
-        this.selectedOption = this.originalOption;
+        this.text = this.originalText;
     }
 
     callSave() {
-        var data = {};  //BUILD OBJ FOR EXPORT.
-        data["" + this.fieldName] = this.selectedOption;
-        var oldoption = this.selectedOption;
-        setTimeout(() => { this.originalOption = oldoption; this.selectedOption = oldoption }, 0);  //Sets the field with the new option;
+        const data:any = {};  //BUILD OBJ FOR EXPORT.
+        data[this.fieldName] = this.text;
+        const oldText = this.text;
+        setTimeout(() => { this.originalText = oldText; this.text = oldText }, 0);  //Sets the field with the new text;
         this.save.emit(data);
         this.show = false;
-
+        
     }
 }

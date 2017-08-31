@@ -66,12 +66,12 @@
 })
 
 export class NdvEditDateComponent {
-    @Input('placeholder') holder;
-    @Input('title') fieldName;
+    @Input('placeholder') holder: any;
+    @Input('title') fieldName: string;
     @Input() permission = true;
-    ddate
-    originalddate;
-    tracker;
+    ddate: any;
+    originalddate: any;
+    tracker: any;
     el: ElementRef;
     show = false;
     save = new EventEmitter;
@@ -95,13 +95,13 @@ export class NdvEditDateComponent {
         }
     }
 
-    compareEvent(globalEvent) {
+    compareEvent(globalEvent: Event) {
         if (this.tracker != globalEvent && this.show) {
             this.cancelEditable();
         }
     }
 
-    trackEvent(newHostEvent) {
+    trackEvent(newHostEvent: Event) {
         this.tracker = newHostEvent;
     }
 
@@ -111,9 +111,9 @@ export class NdvEditDateComponent {
     }
 
     callSave() {
-        var data = {};  //BUILD OBJ FOR EXPORT.
-        data["" + this.fieldName] = this.ddate;
-        var oldddate = this.ddate;
+        const data: any = {};  //BUILD OBJ FOR EXPORT.
+        data[this.fieldName] = this.ddate;
+        const oldddate = this.ddate;
         setTimeout(() => { this.originalddate = oldddate; this.ddate = oldddate }, 0);  //Sets the field with the new ddate;
         this.save.emit(data);
         this.show = false;

@@ -81,10 +81,10 @@
 })
 
 export class NdvEditComponent {
-    @Input('placeholder') text;
-    @Input('title') fieldName;
-    originalText;
-    tracker;
+    @Input('placeholder') text: string;
+    @Input('title') fieldName: string;
+    originalText: string;
+    tracker: any;
     el: ElementRef;
     show = false;
     save = new EventEmitter;
@@ -92,8 +92,8 @@ export class NdvEditComponent {
     m: Number = 3;
     @Input() min = 0;
     @Input() max = 10000;
-    @Input() error;
-    @Input() regex;
+    @Input() error: any;
+    @Input() regex: string;
     invalid = false;
 
     constructor(el: ElementRef) {
@@ -104,7 +104,7 @@ export class NdvEditComponent {
         this.originalText = this.text;    //Saves a copy of the original field info.
     }
 
-    validate(text) {
+    validate(text: string) {
         if (this.regex) {
             var re = new RegExp('' + this.regex, "ig");
             if (re.test(text)) {
@@ -132,13 +132,13 @@ export class NdvEditComponent {
         }
     }
 
-    compareEvent(globalEvent) {
+    compareEvent(globalEvent: Event) {
         if (this.tracker != globalEvent && this.show) {
             this.cancelEditable();
         }
     }
 
-    trackEvent(newHostEvent) {
+    trackEvent(newHostEvent: Event) {
         this.tracker = newHostEvent;
     }
 
@@ -150,9 +150,9 @@ export class NdvEditComponent {
 
     callSave() {
         if (!this.invalid) {
-            var data = {};  //BUILD OBJ FOR EXPORT.
-            data["" + this.fieldName] = this.text;
-            var oldText = this.text;
+            const data:any = {};  //BUILD OBJ FOR EXPORT.
+            data[this.fieldName] = this.text;
+            const oldText = this.text;
             setTimeout(() => { this.originalText = oldText; this.text = oldText }, 0);  //Sets the field with the new text;
             this.save.emit(data);
             this.show = false;

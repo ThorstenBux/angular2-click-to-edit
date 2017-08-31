@@ -1,19 +1,19 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NdvEditComponent } from "./edit/ndv.edit.component";
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { AngularClickToEditModule } from "./ndv/angular-click-to-edit.module";
 
 
 import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    NdvEditComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    AngularClickToEditModule
   ],
   providers: [],
   bootstrap: [AppComponent]
